@@ -7,6 +7,8 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 
+#include "main_menu.h"
+
 int main() {
 	sf::RenderWindow gameWindow(sf::VideoMode::getDesktopMode(), "The Game Of Industry", sf::Style::Fullscreen);
 
@@ -33,30 +35,8 @@ int main() {
 		return -1;
 	}
 
-	sf::Vector2u basicResolution(1920, 1080);
-	unsigned int basicTextSize = 100;
-
-	sf::Vector2u currentResolution = gameWindow.getSize();
-
-	float textSizeRatio = static_cast<float>(currentResolution.y) / basicResolution.y;
-
-	sf::Text menuMainHeading;
-	menuMainHeading.setFont(geistMonoExtraBold);
-	menuMainHeading.setString("The Game Of Industry");
-	menuMainHeading.setCharacterSize(40);
-	menuMainHeading.setFillColor(sf::Color::Black);
-	menuMainHeading.setPosition(100, 100);
-
-	sf::Text menu[3];
-	std::string menuItems[] = {"Play", "Settings", "Exit"};
-
-	for (int i = 0; i < std::size(menuItems); i++) {
-		menu[i].setFont(geistMonoMedium);
-		menu[i].setCharacterSize(20);
-		menu[i].setFillColor(sf::Color::Color(100, 100, 100));
-		menu[i].setPosition(100, 200 + i * 80);
-		menu[i].setString(menuItems[i]);
-	}	
+	std::vector<std::string> menuItems = { "Play", "Settings", "Exit"};
+	Menu menu(geistMonoMedium, menuItems);
 
 	while (gameWindow.isOpen()) {
 		sf::Event event;
@@ -67,16 +47,13 @@ int main() {
 			}
 		}
 
-		gameWindow.clear(sf::Color(246,246,246));
+		gameWindow.clear(sf::Color(246, 246, 246));
 
-		gameWindow.draw(menuMainHeading);
-		for (int i = 0; i < std::size(menu); i++) {
-			gameWindow.draw(menu[i]);
-		}
+		menu.draw(gameWindow);
 
 		gameWindow.display();
 	}
-	
+
 
 	return 0;
 }
