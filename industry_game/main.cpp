@@ -1,4 +1,7 @@
-﻿#include <iostream>
+﻿// #################
+// ### INCLUDING ###
+// #################
+#include <iostream>
 #include <string>
 #include <array>
 
@@ -9,34 +12,38 @@
 
 #include "main_menu.h"
 
+// ##############################
+// ### FUNCTIONS DECLARATIONS ###
+// ##############################
+
+template <typename T>
+bool loadResource(T& resource, const std::string& filename);
+
 int main() {
+	// #############################################
+	// ### SETUPING WINDOW, CURSOR, IMAGES, MENU ###
+	// #############################################
 	sf::RenderWindow gameWindow(sf::VideoMode::getDesktopMode(), "The Game Of Industry", sf::Style::Fullscreen);
-
 	sf::Image cursorImage;
-	if (!cursorImage.loadFromFile("cursor.png")) {
-		std::cerr << "Cursor image didn't load!";
-		return -1;
-	}
-
 	sf::Cursor gunCursor;
-	if (gunCursor.loadFromPixels(cursorImage.getPixelsPtr(), cursorImage.getSize(), sf::Vector2u(16, 16))) {
-		gameWindow.setMouseCursor(gunCursor);
-	}
-
 	sf::Font geistMonoExtraBold;
 	sf::Font geistMonoMedium;
+	std::vector<std::string> menuItems = {"Play", "Settings", "Exit"};
+	Menu menu(geistMonoMedium, menuItems, "The Game Of Industry", gameWindow);
 
-	if (!geistMonoExtraBold.loadFromFile("fonts/GeistMono-ExtraBold.ttf")) {
-		std::cerr << "Error while loading GeistMono-ExtraBold.ttf!";
-		return -1;
-	}
-	if (!geistMonoMedium.loadFromFile("fonts/GeistMono-Medium.ttf")) {
-		std::cerr << "Error while loading GeistMono-Medium.tff!";
-		return -1;
-	}
+	// #########################
+	// ### LOADING RESOURCES ###
+	// #########################
+	loadResource(geistMonoExtraBold,"fonts/GeistMono-ExtraBold.ttf");
+	loadResource(geistMonoMedium, "fonts/GeistMono-Medium.ttf");
+	loadResource(cursorImage, "cursor.png");
 
-	std::vector<std::string> menuItems = { "Play", "Settings", "Exit"};
-	Menu menu(geistMonoMedium, menuItems);
+	// #################
+	// ### GAME LOOP ###
+	// #################
+
+	gunCursor.loadFromPixels(cursorImage.getPixelsPtr(), cursorImage.getSize(), sf::Vector2u(0, 0));
+	gameWindow.setMouseCursor(gunCursor);
 
 	while (gameWindow.isOpen()) {
 		sf::Event event;
@@ -45,6 +52,7 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				gameWindow.close();
 			}
+			menu.handleEvent(event, gameWindow);
 		}
 
 		gameWindow.clear(sf::Color(246, 246, 246));
@@ -56,4 +64,14 @@ int main() {
 
 
 	return 0;
+}
+
+// Loader of media (need file path)
+template <typename T>
+bool loadResource(T& resource, const std::string& filename) {
+	if (!resource.loadFromFile(filename)) {
+		std::cerr << "Error loadning " << filename << "!" << std::endl;
+		return false;
+	}
+	return true;
 }
