@@ -8,9 +8,7 @@ Menu::Menu(const sf::Font& font, const std::vector<std::string>& items, std::str
     if (!buffer.loadFromFile("anvilStrike.wav")) {
         std::cerr << "ERROR - Failed to load sound" << std::endl;
     }
-
-    // Inicializace poolu zvuků
-    for (int i = 0; i < 5; ++i) { // 5 zvukových instancí
+    for (int i = 0; i < 5; ++i) { 
         sf::Sound sound;
         sound.setBuffer(buffer);
         soundPool.push_back(sound);
@@ -33,7 +31,7 @@ Menu::Menu(const sf::Font& font, const std::vector<std::string>& items, std::str
         menuItemText.setCharacterSize(static_cast<unsigned int>(textSizeRatio * 50));
 
         menuItems.push_back(menuItemText);
-        howers.push_back(false); // Inicializace hover stavu na false
+        howers.push_back(false);
     }
 }
 
@@ -55,15 +53,21 @@ void Menu::handleEvent(const sf::Event& event, sf::RenderWindow& gameWindow) {
 
     for (size_t i = 0; i < menuItems.size(); ++i) {
         if (menuItems[i].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-            if (!howers[i]) { // Pokud myš nově vstoupila na položku
+            menuItems[i].setFillColor(sf::Color(100, 100, 100));
+            if (!howers[i]) {
                 soundPool[currentSoundIndex].play();
-                currentSoundIndex = (currentSoundIndex + 1) % soundPool.size(); // Posun na další zvuk
+                currentSoundIndex = (currentSoundIndex + 1) % soundPool.size();
                 howers[i] = true;
             }
-            menuItems[i].setFillColor(sf::Color(100, 100, 100));
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left) {
+               if (menuItems[i].getString() == "Exit")
+               {
+                    gameWindow.close();
+               }
+            }
         }
         else {
-            howers[i] = false; // Reset hover stavu, pokud myš opustí položku
+            howers[i] = false;
             menuItems[i].setFillColor(sf::Color(200, 200, 200));
         }
     }

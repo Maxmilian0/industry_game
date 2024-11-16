@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+//#include "message_box.h"
 
 class Menu {
 public:
@@ -17,12 +18,12 @@ public:
 
 private:
     std::vector<sf::Text> menuItems;
-    std::vector<bool> howers; // Dynamický vektor pro správu hoverů
+    std::vector<bool> howers;
     sf::Text menuTitleTextGlobal;
-
-    sf::SoundBuffer buffer; // Buffer pro zvuk
-    std::vector<sf::Sound> soundPool; // Pole zvuků pro cyklické přehrávání
-    size_t currentSoundIndex = 0; // Index aktuálního zvuku v poolu
+    sf::SoundBuffer buffer;
+    std::vector<sf::Sound> soundPool;
+    size_t currentSoundIndex = 0;
+    //MessageBox test;
 };
 
 #endif // MAIN_MENU_H
