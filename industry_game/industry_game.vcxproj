@@ -135,12 +135,14 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu.cpp" />
+    <ClCompile Include="media_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_menu.h" />
+    <ClInclude Include="media_loader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,4 @@
-﻿// #################
-// ### INCLUDING ###
-// #################
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <array>
 
@@ -10,41 +7,31 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 
+// Private
 #include "main_menu.h"
-
-// ##############################
-// ### FUNCTIONS DECLARATIONS ###
-// ##############################
-
-template <typename T>
-bool loadResource(T& resource, const std::string& filename);
+#include "media_loader.h"
 
 int main() {
-	// #############################################
-	// ### SETUPING WINDOW, CURSOR, IMAGES, MENU ###
-	// #############################################
+	// Settuping window, images, cursor, fonts
 	sf::RenderWindow gameWindow(sf::VideoMode::getDesktopMode(), "The Game Of Industry", sf::Style::Fullscreen);
 	sf::Image cursorImage;
 	sf::Cursor gunCursor;
 	sf::Font geistMonoExtraBold;
 	sf::Font geistMonoMedium;
-	std::vector<std::string> menuItems = {"Play", "Settings", "Exit"};
+	std::vector<std::string> menuItems = { "Play", "Settings", "Exit" };
+
 	Menu menu(geistMonoMedium, menuItems, "The Game Of Industry", gameWindow);
 
-	// #########################
-	// ### LOADING RESOURCES ###
-	// #########################
-	loadResource(geistMonoExtraBold,"fonts/GeistMono-ExtraBold.ttf");
-	loadResource(geistMonoMedium, "fonts/GeistMono-Medium.ttf");
-	loadResource(cursorImage, "cursor.png");
-
-	// #################
-	// ### GAME LOOP ###
-	// #################
+	// Loading media
+	MediaLoader::loadSoundBuffer(geistMonoExtraBold, "fonts/GeistMono-ExtraBold.ttf");
+	MediaLoader::loadSoundBuffer(geistMonoMedium, "fonts/GeistMono-Medium.ttf");
+	MediaLoader::loadSoundBuffer(cursorImage, "cursor.png");
 
 	gunCursor.loadFromPixels(cursorImage.getPixelsPtr(), cursorImage.getSize(), sf::Vector2u(0, 0));
 	gameWindow.setMouseCursor(gunCursor);
 
+
+	// Game loop
 	while (gameWindow.isOpen()) {
 		sf::Event event;
 		while (gameWindow.pollEvent(event))
@@ -64,14 +51,4 @@ int main() {
 
 
 	return 0;
-}
-
-// Loader of media (need file path)
-template <typename T>
-bool loadResource(T& resource, const std::string& filename) {
-	if (!resource.loadFromFile(filename)) {
-		std::cerr << "Error loadning " << filename << "!" << std::endl;
-		return false;
-	}
-	return true;
 }
