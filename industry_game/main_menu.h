@@ -6,15 +6,16 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <fstream>
 //#include "message_box.h"
 
 class Menu {
 public:
-    Menu(const sf::Font& font, const std::vector<std::string>& items, std::string menuTitle, sf::RenderWindow& gameWindow);
+    Menu(const sf::Font& _Font, const std::vector<std::string>& _Items, std::string _MenuTitle, sf::RenderWindow& _GameWindow);
 
-    void setPosition(float x, float y);
-    void draw(sf::RenderWindow& gameWindow);
-    int handleEvent(const sf::Event& event, sf::RenderWindow& gameWindow);
+    void setPosition(float _X, float _Y);
+    void draw(sf::RenderWindow& _GameWindow);
+    int handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow);
 
 private:
     std::vector<sf::Text> menuItems;
@@ -23,6 +24,7 @@ private:
     sf::SoundBuffer buffer;
     std::vector<sf::Sound> soundPool;
     size_t currentSoundIndex = 0;
+    std::fstream logFile;
     //MessageBox test;
 };
 
