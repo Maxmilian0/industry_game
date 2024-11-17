@@ -14,7 +14,7 @@ public:
 
     void setPosition(float x, float y);
     void draw(sf::RenderWindow& gameWindow);
-    void handleEvent(const sf::Event& event, sf::RenderWindow& gameWindow);
+    int handleEvent(const sf::Event& event, sf::RenderWindow& gameWindow);
 
 private:
     std::vector<sf::Text> menuItems;

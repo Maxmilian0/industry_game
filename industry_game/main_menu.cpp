@@ -48,7 +48,7 @@ void Menu::draw(sf::RenderWindow& gameWindow) {
     }
 }
 
-void Menu::handleEvent(const sf::Event& event, sf::RenderWindow& gameWindow) {
+int Menu::handleEvent(const sf::Event& event, sf::RenderWindow& gameWindow) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(gameWindow);
 
     for (size_t i = 0; i < menuItems.size(); ++i) {
@@ -60,9 +60,17 @@ void Menu::handleEvent(const sf::Event& event, sf::RenderWindow& gameWindow) {
                 howers[i] = true;
             }
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left) {
-               if (menuItems[i].getString() == "Exit")
-               {
-                    gameWindow.close();
+               if (menuItems[i].getString() == "Exit") {
+                   gameWindow.close();
+               }
+               else if (menuItems[i].getString() == "Play") {
+                   return 1;
+               }
+               else if (menuItems[i].getString() == "Settings") {
+                   return 2;
+               }
+               else {
+                   return -1;
                }
             }
         }

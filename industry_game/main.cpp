@@ -1,16 +1,15 @@
 ﻿#include <iostream>
 #include <string>
 #include <array>
+#include <sstream>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 
-// Private
 #include "main_menu.h"
 #include "media_loader.h"
-#include <sstream>
 
 int main() {
 	// Settuping window, images, cursor, fonts
@@ -40,8 +39,13 @@ int main() {
 	gunCursor.loadFromPixels(cursorImage.getPixelsPtr(), cursorImage.getSize(), sf::Vector2u(0, 0));
 	gameWindow.setMouseCursor(gunCursor);
 	
-	int fpsSlower = 110;
+	// FPS things
+	int fpsSlower = 110; // For better debugging output
 	gameWindow.setFramerateLimit(60);
+
+	// State switching mechanism (when i play game, i don't see menu)
+	enum GameState {MENU, GAME};
+	GameState currentState = MENU;
 
 	// Game loop
 	while (gameWindow.isOpen()) {
@@ -51,7 +55,24 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				gameWindow.close();
 			}
-			menu.handleEvent(event, gameWindow);
+
+			if (currentState == MENU) {
+				switch (menu.handleEvent(event, gameWindow)) {
+				case 1:
+					std::cout << "Start game!" << std::endl;
+					currentState = GAME;
+					break;
+				case 2:
+					std::cout << "Open settings" << std::endl;
+					break;
+				case -1:
+					std::cout << "Error_01a4(menu selector)" << std::endl;
+					return -1;
+				}
+			}
+			else if (currentState == GAME) {
+				std::cout << "Playing game!" << std::endl;
+			}
 		}
 
 		float deltaTime = clock.restart().asSeconds();
@@ -66,8 +87,15 @@ int main() {
 		}
 		gameWindow.clear(sf::Color(246, 246, 246));
 
-		menu.draw(gameWindow);
-		gameWindow.draw(fpsText);
+		if (currentState == MENU) {
+			menu.draw(gameWindow);
+		}
+		else if (currentState == GAME) {
+
+		}
+
+		gameWindow.draw(fpsText); // FPS count for debug
+		
 
 		gameWindow.display();
 	}
