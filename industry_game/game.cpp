@@ -1,72 +1,89 @@
-#include "game.h"
+﻿#include "game.h"
 
+// Globální inicializace generátoru náhodných čísel
 std::random_device rd;
 std::mt19937 gen(rd());
-std::uniform_int_distribution<> dis(0, 255);
+std::uniform_int_distribution<> dis(0, 4);
 
+// Konstruktor třídy Game
+Game::Game() {
+    // Pokus o načtení textury
+    if (!tileSet.loadFromFile("img/texture4.png")) {
+        logFile.open("REPORT.txt", std::ios::app);
+        if (logFile.is_open()) {
+            logFile << "[X] Error while loading img/texture.png" << std::endl;
+            logFile.close();
+        }
+        else {
+            std::cerr << "Failed to open log file." << std::endl;
+        }
+        return;  // Ukončí konstruktor, pokud se textura nepodaří načíst
+    }
 
-Game::Game()
-{
-	// define the position of the triangle's points
-	float height = 100.f;
-	float width = height * 2;
+    // Vytvoření a inicializace dlaždic
+    int halfer = 0;
+    int y = 0;
+    int iHelper = 0;
+    for (size_t i = 0; i < 300; i++) {
+        sf::ConvexShape mapTile;
+        mapTile.setPointCount(6); // Hexagonální tvar
+        if (i % 11 == 0 && i != 0) {
+            y += 50;
+            iHelper = 0;
+            if (halfer == 100) {
+                halfer = 0;
+            }
+            else {
+                halfer = 100;
+            }
+        }
+        mapTile.setPosition(sf::Vector2f(iHelper * 200 - halfer, y - 200));
 
-	int line = 0;
-	float halfer = width / 2;
-	int lineCutter = 11;
+        // Nastavení bodů hexagonu
+        mapTile.setPoint(0, sf::Vector2f(0, 50));
+        mapTile.setPoint(1, sf::Vector2f(100, 0));
+        mapTile.setPoint(2, sf::Vector2f(200, 50));
+        mapTile.setPoint(3, sf::Vector2f(200, 150));
+        mapTile.setPoint(4, sf::Vector2f(100, 200));
+        mapTile.setPoint(5, sf::Vector2f(0, 150));
 
-	for (size_t i = 0; i < 252; i++) {
-		float x = width * line - halfer;
-		float y = (i / lineCutter) * height - height;
-		line++;
-		if (line >= lineCutter) {
-			line = 0;
-			if (halfer == 0) {
-				halfer = width / 2;
-			}
-			else {
-				halfer = 0;
-			}
-		}
-		y /= 2;
-		sf::VertexArray rhombus(sf::Quads, 4);
-		rhombus[0].position = sf::Vector2f(x, height / 2 + y);
-		rhombus[1].position = sf::Vector2f(width / 2 + x, y);
-		rhombus[2].position = sf::Vector2f(width + x, height / 2 + y);
-		rhombus[3].position = sf::Vector2f(width / 2 + x, height + y);
+        // Připojení textury k dlaždici
+        mapTile.setTexture(&tileSet);
+        mapTile.setTextureRect(sf::IntRect(dis(gen) * 200, 0, 200, 200));
 
-		// define the color of the triangle's points
-		rhombus[0].color = sf::Color(dis(gen), dis(gen), dis(gen));
-		rhombus[1].color = sf::Color(dis(gen), dis(gen), dis(gen));
-		rhombus[2].color = sf::Color(dis(gen), dis(gen), dis(gen));
-		rhombus[3].color = sf::Color(dis(gen), dis(gen), dis(gen));
-
-		mapItems.push_back(rhombus);
-	}
+        // Přidání dlaždice do seznamu
+        mapItems.push_back(mapTile);
+        iHelper++;
+    }
 }
 
+// Kreslení objektů na obrazovku
 void Game::draw(sf::RenderWindow& _GameWindow) {
-	for (const auto& mapItem : mapItems) {
-		_GameWindow.draw(mapItem);
-	}
+    for (const auto& mapItem : mapItems) {
+        _GameWindow.draw(mapItem);
+    }
 }
 
+// Aktualizace herní logiky (zatím prázdná)
 void Game::update() {
 }
 
+// Zpracování událostí
 int Game::handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow) {
-	// RETURN 0 = stay in game
-	// RETURN 1 = return to main menu
-	sf::Vector2i mousePos = sf::Mouse::getPosition(_GameWindow);
+    // Vrátí 0, pokud hra pokračuje
+    // Vrátí 1, pokud se má vrátit do hlavního menu
+    sf::Vector2i mousePos = sf::Mouse::getPosition(_GameWindow);
 
-	if (_Event.type == sf::Event::KeyPressed && _Event.key.scancode == sf::Keyboard::Scan::Escape) {
-		return 1;
-	}
-	for (size_t i = 0; i < mapItems.size(); ++i) {
-		//if ())) {
+    if (_Event.type == sf::Event::KeyPressed && _Event.key.scancode == sf::Keyboard::Scan::Escape) {
+        return 1;
+    }
 
-		//}
-	}
+    for (size_t i = 0; i < mapItems.size(); ++i) {
+        // Zde můžete implementovat zpracování kliknutí na dlaždice
+        // if (/* nějaká podmínka */) {
+        //     // Reakce na událost
+        // }
+    }
 
-	return 0;
+    return 0;
 }

@@ -18,90 +18,11 @@
 #include "media_loader.h"
 #include "game.h"
 
-// Funkce pro získání aktuálního času
-std::string getCurrentTime() {
-    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    char buffer[26];
-    ctime_s(buffer, sizeof(buffer), &now);
-    std::string timeStr(buffer);
-    timeStr.pop_back();
-    return timeStr;
-}
-
-// Funkce pro získání uživatelského jména
-std::string getUsername() {
-    wchar_t username[256];
-    DWORD len = 256;
-    if (GetUserNameW(username, &len)) {
-        int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, username, -1, nullptr, 0, nullptr, nullptr);
-        std::string result(sizeNeeded, '\0');
-        WideCharToMultiByte(CP_UTF8, 0, username, -1, &result[0], sizeNeeded, nullptr, nullptr);
-        return result;
-    }
-    else {
-        return "Unknown User";
-    }
-}
-
-// Funkce pro získání verze operačního systému
-std::string getOSVersion() {
-    OSVERSIONINFOEX osvi = {};
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-
-    typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(OSVERSIONINFOEX*);
-    RtlGetVersionPtr RtlGetVersion = (RtlGetVersionPtr)GetProcAddress(GetModuleHandle(L"ntdll.dll"), "RtlGetVersion");
-
-    if (RtlGetVersion) {
-        if (RtlGetVersion(&osvi) == 0) {
-            std::ostringstream oss;
-            oss << "Windows " << osvi.dwMajorVersion << "." << osvi.dwMinorVersion
-                << " (Build " << osvi.dwBuildNumber << ")";
-            return oss.str();
-        }
-    }
-    return "Unable to determine OS version";
-}
-
-// Funkce pro získání informací o RAM
-void logMemoryInfo(std::ofstream& logFile) {
-    MEMORYSTATUSEX statex;
-    statex.dwLength = sizeof(MEMORYSTATUSEX);
-
-    if (GlobalMemoryStatusEx(&statex)) {
-        logFile << "Total RAM: " << statex.ullTotalPhys / (1024 * 1024) << " MB" << std::endl;  // Celková RAM
-        logFile << "Available RAM: " << statex.ullAvailPhys / (1024 * 1024) << " MB" << std::endl;  // Volná RAM
-        logFile << "Used RAM: " << (statex.ullTotalPhys - statex.ullAvailPhys) / (1024 * 1024) << " MB" << std::endl; // Použitá RAM
-    }
-    else {
-        logFile << "[X] Failed to get memory info." << std::endl;
-    }
-}
-
-// Funkce pro zápis diagnostických informací
-void logDiagnostics(const std::string& logFileName) {
-    std::ofstream logFile(logFileName, std::ios::app);
-    if (!logFile.is_open()) {
-        std::cerr << "Failed to open log file\n";
-        return;
-    }
-
-    std::string timeStr = getCurrentTime();
-    std::string username = getUsername();
-    std::string osVersion = getOSVersion();
-    unsigned int cores = std::thread::hardware_concurrency();
-
-    logFile << "========================- PLAYER'S PC  -========================\n\n";
-    logFile << "Time: " << timeStr << "\n";
-    logFile << "User: " << username << "\n";
-    logFile << "OS Version: " << osVersion << "\n";
-    logFile << "CPU Cores: " << cores << "\n";
-    auto desktopMode = sf::VideoMode::getDesktopMode();
-    logFile << "Screen resolution: " << desktopMode.width << "x" << desktopMode.height << "\n"; 
-    logMemoryInfo(logFile);
-    logFile << "\n========================- DEBUG REPORT -========================\n\n";
-    logFile.close();
-}
-
+std::string getCurrentTime();
+std::string getUsername();
+std::string getOSVersion();
+void logMemoryInfo(std::ofstream& logFile);
+void logDiagnostics(const std::string& logFileName);
 
 int main() {
     auto start = std::chrono::system_clock::now();
@@ -160,7 +81,7 @@ int main() {
     // FPS settings
     int fpsSlower = 110; // For better debugging output
     int fpsFramerateLimitNum = 60;
-    gameWindow.setFramerateLimit(fpsFramerateLimitNum);
+    //gameWindow.setFramerateLimit(fpsFramerateLimitNum);
 
     logFile.open("REPORT.txt", std::ios::app);
     logFile << "[?] Game window FPS limit: " << fpsFramerateLimitNum << std::endl;
@@ -237,6 +158,9 @@ int main() {
                     mainMenuMusic.stop();
                 }
                 if (game.handleEvent(event, gameWindow) == 1){
+                    logFile.open("REPORT.txt", std::ios::app);
+                    logFile << "\t* MENU STATE *" << std::endl;
+                    logFile.close();
                     currentState = MENU;
                 }
                
@@ -295,4 +219,83 @@ int main() {
     logFile.close();
 
     return 0;
+}
+
+std::string getCurrentTime() {
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    char buffer[26];
+    ctime_s(buffer, sizeof(buffer), &now);
+    std::string timeStr(buffer);
+    timeStr.pop_back();
+    return timeStr;
+}
+
+std::string getUsername() {
+    wchar_t username[256];
+    DWORD len = 256;
+    if (GetUserNameW(username, &len)) {
+        int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, username, -1, nullptr, 0, nullptr, nullptr);
+        std::string result(sizeNeeded, '\0');
+        WideCharToMultiByte(CP_UTF8, 0, username, -1, &result[0], sizeNeeded, nullptr, nullptr);
+        return result;
+    }
+    else {
+        return "Unknown User";
+    }
+}
+
+std::string getOSVersion() {
+    OSVERSIONINFOEX osvi = {};
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+    typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(OSVERSIONINFOEX*);
+    RtlGetVersionPtr RtlGetVersion = (RtlGetVersionPtr)GetProcAddress(GetModuleHandle(L"ntdll.dll"), "RtlGetVersion");
+
+    if (RtlGetVersion) {
+        if (RtlGetVersion(&osvi) == 0) {
+            std::ostringstream oss;
+            oss << "Windows " << osvi.dwMajorVersion << "." << osvi.dwMinorVersion
+                << " (Build " << osvi.dwBuildNumber << ")";
+            return oss.str();
+        }
+    }
+    return "Unable to determine OS version";
+}
+
+void logMemoryInfo(std::ofstream& logFile) {
+    MEMORYSTATUSEX statex;
+    statex.dwLength = sizeof(MEMORYSTATUSEX);
+
+    if (GlobalMemoryStatusEx(&statex)) {
+        logFile << "Total RAM: " << statex.ullTotalPhys / (1024 * 1024) << " MB" << std::endl;  // Celková RAM
+        logFile << "Available RAM: " << statex.ullAvailPhys / (1024 * 1024) << " MB" << std::endl;  // Volná RAM
+        logFile << "Used RAM: " << (statex.ullTotalPhys - statex.ullAvailPhys) / (1024 * 1024) << " MB" << std::endl; // Použitá RAM
+    }
+    else {
+        logFile << "[X] Failed to get memory info." << std::endl;
+    }
+}
+
+void logDiagnostics(const std::string& logFileName) {
+    std::ofstream logFile(logFileName, std::ios::app);
+    if (!logFile.is_open()) {
+        std::cerr << "Failed to open log file\n";
+        return;
+    }
+
+    std::string timeStr = getCurrentTime();
+    std::string username = getUsername();
+    std::string osVersion = getOSVersion();
+    unsigned int cores = std::thread::hardware_concurrency();
+
+    logFile << "========================- PLAYER'S PC  -========================\n\n";
+    logFile << "Time: " << timeStr << "\n";
+    logFile << "User: " << username << "\n";
+    logFile << "OS Version: " << osVersion << "\n";
+    logFile << "CPU Cores: " << cores << "\n";
+    auto desktopMode = sf::VideoMode::getDesktopMode();
+    logFile << "Screen resolution: " << desktopMode.width << "x" << desktopMode.height << "\n"; 
+    logMemoryInfo(logFile);
+    logFile << "\n========================- DEBUG REPORT -========================\n\n";
+    logFile.close();
 }
