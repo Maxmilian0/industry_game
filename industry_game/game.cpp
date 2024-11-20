@@ -6,12 +6,15 @@ std::mt19937 gen(rd());
 std::uniform_int_distribution<> dis(0, 4);
 
 // Konstruktor třídy Game
-Game::Game() {
+Game::Game() : camera(sf::FloatRect(0, 0, 800, 600))
+{
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+    camera   = sf::View(sf::FloatRect(0, 0, desktop.width, desktop.height));
     // Pokus o načtení textury
     if (!tileSet.loadFromFile("img/texture4.png")) {
         logFile.open("REPORT.txt", std::ios::app);
         if (logFile.is_open()) {
-            logFile << "[X] Error while loading img/texture.png" << std::endl;
+            logFile << "\t[X] Error while loading img/texture.png" << std::endl;
             logFile.close();
         }
         else {
@@ -24,10 +27,11 @@ Game::Game() {
     int halfer = 0;
     int y = 0;
     int iHelper = 0;
-    for (size_t i = 0; i < 300; i++) {
+    unsigned int worldSize = 50;
+    for (size_t i = 0; i < worldSize * worldSize * 2; i++) {
         sf::ConvexShape mapTile;
         mapTile.setPointCount(6); // Hexagonální tvar
-        if (i % 11 == 0 && i != 0) {
+        if (i % worldSize == 0 && i != 0) {
             y += 50;
             iHelper = 0;
             if (halfer == 100) {
@@ -57,15 +61,46 @@ Game::Game() {
     }
 }
 
-// Kreslení objektů na obrazovku
 void Game::draw(sf::RenderWindow& _GameWindow) {
+    _GameWindow.setView(camera);  // Nastavení pohledu podle kamera
+
+    // Získání oblasti zorného pole kamery
+    sf::FloatRect viewBounds(camera.getCenter() - camera.getSize() / 2.f, camera.getSize());
+
+    // Pro každý objekt v mapItems zkontrolujeme, jestli je uvnitř zorného pole
     for (const auto& mapItem : mapItems) {
-        _GameWindow.draw(mapItem);
+        // Získáme pozici dlaždice (bounding box)
+        sf::FloatRect itemBounds = mapItem.getGlobalBounds();
+
+        // Pokud se dlaždice nachází uvnitř kamery, vykreslíme ji
+        if (viewBounds.intersects(itemBounds)) {
+            _GameWindow.draw(mapItem);
+        }
     }
 }
 
-// Aktualizace herní logiky (zatím prázdná)
 void Game::update() {
+    float cameraSpeed = 150.f;  // Rychlost pohybu kamery
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+        cameraSpeed = 15.f;  // Rychlost při držení shiftu
+    }
+
+    // Získání delta time, které udává čas, který uplynul od posledního snímku
+    float deltaTime = deltaClock.restart().asSeconds();  // Vrátí čas mezi snímky v sekundách
+
+    // Posun kamery na základě kláves s plynulým pohybem
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+        camera.move(0, -cameraSpeed * deltaTime);  // Nahoru
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+        camera.move(0, cameraSpeed * deltaTime);  // Dolů
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        camera.move(-cameraSpeed * deltaTime, 0);  // Doleva
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        camera.move(cameraSpeed * deltaTime, 0);  // Doprava
+    }
 }
 
 // Zpracování událostí

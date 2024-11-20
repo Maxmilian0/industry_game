@@ -34,7 +34,7 @@ int main() {
     logFile << "[*]         = something is successfully done" << std::endl;
     logFile << "[O]         = \"new chapter\" of debug output" << std::endl;
     logFile << "* STATE *   = current state. Examples: GAME STATE, MENU STATE" << std::endl;
-    logFile << "[X]         = error message" << std::endl;
+    logFile << "\t[X]         = error message" << std::endl;
     logFile << "[!]         = warning" << std::endl;
     logFile << "[?]         = debug info" << std::endl;
     logDiagnostics("REPORT.txt");
@@ -51,7 +51,7 @@ int main() {
     sf::Music mainMenuMusic;
     if (!mainMenuMusic.openFromFile("music/industryMadness.mp3")) {
         logFile.open("REPORT.txt", std::ios::app);
-        logFile << "[X] Error_8r4be (music/industryMadness.mp3)" << std::endl;
+        logFile << "\t[X] Error_8r4be (music/industryMadness.mp3)" << std::endl;
         logFile.close();
         std::cout << "ERROR";
     }
@@ -81,7 +81,7 @@ int main() {
     // FPS settings
     int fpsSlower = 110; // For better debugging output
     int fpsFramerateLimitNum = 60;
-    //gameWindow.setFramerateLimit(fpsFramerateLimitNum);
+    gameWindow.setFramerateLimit(fpsFramerateLimitNum);
 
     logFile.open("REPORT.txt", std::ios::app);
     logFile << "[?] Game window FPS limit: " << fpsFramerateLimitNum << std::endl;
@@ -128,7 +128,7 @@ int main() {
                 }
                 else {
                     logFile.open("REPORT.txt", std::ios::app);
-                    logFile << "[X] Failed to create screenshot " << getCurrentTime() << std::endl;
+                    logFile << "\t[X] Failed to create screenshot " << getCurrentTime() << std::endl;
                     logFile.close();
                 }
             }
@@ -148,12 +148,13 @@ int main() {
                     break;
                 case -1:
                     logFile.open("REPORT.txt", std::ios::app);
-                    logFile << "[X] Error_01a4 (menu selector)" << std::endl;
+                    logFile << "\t[X] Error_01a4 (menu selector)" << std::endl;
                     logFile.close();
                     return -1;
                 }
             }
             else if (currentState == GAME) {
+                game.update();
                 if (mainMenuMusic.getStatus() == sf::Music::Status::Playing) {
                     mainMenuMusic.stop();
                 }

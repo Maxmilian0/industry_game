@@ -1,4 +1,4 @@
-#ifndef GAME_H
+Ôªø#ifndef GAME_H
 #define GAME_H
 
 #include <SFML/Graphics.hpp>
@@ -18,9 +18,11 @@ public:
     int handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow);
 
 private:
-    std::vector<sf::ConvexShape> mapItems;  // Seznam dlaûdic
-    sf::Texture tileSet;                   // Textura, kter· bude pouûit· na dlaûdice
-    std::fstream logFile;                  // Soubor pro zapisov·nÌ chybov˝ch hl·öek
+    std::vector<sf::ConvexShape> mapItems;  // Seznam dla≈ædic
+    sf::Texture tileSet;                   // Textura, kter√° bude pou≈æit√° na dla≈ædice
+    std::fstream logFile;                  // Soubor pro zapisov√°n√≠ chybov√Ωch hl√°≈°ek
+    sf::View camera;
+    sf::Clock deltaClock;  // Hodiny pro mƒõ≈ôen√≠ delta time
 };
 
 #endif // GAME_H

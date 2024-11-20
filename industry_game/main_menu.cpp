@@ -7,7 +7,7 @@ Menu::Menu(const sf::Font& _Font, const std::vector<std::string>& _Items, std::s
 
     if (!buffer.loadFromFile("sound/anvilStrike.wav")) {
         logFile.open("REPORT.txt", std::ios::app);
-        logFile << "[X] Error_4v8e (anviltrike.wav)" << std::endl;
+        logFile << "\t[X] Error_4v8e (anviltrike.wav)" << std::endl;
         logFile.close();
     }
     for (int i = 0; i < 5; ++i) { 
