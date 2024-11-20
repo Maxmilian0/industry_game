@@ -15,7 +15,7 @@ public:
 	
 	void draw(sf::RenderWindow& _GameWindow);
 	void update();
-	void handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow);
+	int handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow);
 private:
 	std::vector<sf::VertexArray> mapItems;
 	std::fstream logFile;

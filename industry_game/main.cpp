@@ -127,6 +127,14 @@ int main() {
     sf::Font geistMonoMedium;
     std::vector<std::string> menuItems = { "Play", "Settings", "Exit" };
     sf::Text fpsText, mousePosText;
+    sf::Music mainMenuMusic;
+    if (!mainMenuMusic.openFromFile("music/industryMadness.mp3")) {
+        logFile.open("REPORT.txt", std::ios::app);
+        logFile << "[X] Error_8r4be (music/industryMadness.mp3)" << std::endl;
+        logFile.close();
+        std::cout << "ERROR";
+    }
+    mainMenuMusic.play();
 
     fpsText.setFont(geistMonoMedium);
     fpsText.setFillColor(sf::Color::Black);
@@ -182,8 +190,32 @@ int main() {
                 logFile.close();
                 gameWindow.close();
             }
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::S) {
+                // Create a texture and capture the window content
+                sf::Texture texture;
+                texture.create(gameWindow.getSize().x, gameWindow.getSize().y);
+                texture.update(gameWindow);
+
+                // Convert the texture to an image
+                sf::Image screenshot = texture.copyToImage();
+
+                // Save the screenshot to a file
+                if (screenshot.saveToFile("screenshot.png")) {
+                    logFile.open("REPORT.txt", std::ios::app);
+                    logFile << "[*] Created screenshot " << getCurrentTime() << std::endl;
+                    logFile.close();
+                }
+                else {
+                    logFile.open("REPORT.txt", std::ios::app);
+                    logFile << "[X] Failed to create screenshot " << getCurrentTime() << std::endl;
+                    logFile.close();
+                }
+            }
 
             if (currentState == MENU) {
+                if (mainMenuMusic.getStatus() != sf::Music::Status::Playing) {
+                    mainMenuMusic.play();
+                }
                 switch (menu.handleEvent(event, gameWindow)) {
                 case 1:
                     logFile.open("REPORT.txt", std::ios::app);
@@ -201,7 +233,13 @@ int main() {
                 }
             }
             else if (currentState == GAME) {
-                game.handleEvent(event, gameWindow);
+                if (mainMenuMusic.getStatus() == sf::Music::Status::Playing) {
+                    mainMenuMusic.stop();
+                }
+                if (game.handleEvent(event, gameWindow) == 1){
+                    currentState = MENU;
+                }
+               
             }
         }
 

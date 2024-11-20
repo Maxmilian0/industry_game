@@ -54,18 +54,19 @@ void Game::draw(sf::RenderWindow& _GameWindow) {
 void Game::update() {
 }
 
-void Game::handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow) {
+int Game::handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow) {
+	// RETURN 0 = stay in game
+	// RETURN 1 = return to main menu
 	sf::Vector2i mousePos = sf::Mouse::getPosition(_GameWindow);
 
 	if (_Event.type == sf::Event::KeyPressed && _Event.key.scancode == sf::Keyboard::Scan::Escape) {
-		logFile.open("REPORT.txt", std::ios::app);
-		logFile << "[!] Closing program (Esc key in game)" << std::endl;
-		logFile.close();
-		_GameWindow.close();
+		return 1;
 	}
 	for (size_t i = 0; i < mapItems.size(); ++i) {
 		//if ())) {
 
 		//}
 	}
+
+	return 0;
 }
