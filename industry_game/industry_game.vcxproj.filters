@@ -27,7 +27,7 @@
     <ClCompile Include="game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="devText.cpp">
+    <ClCompile Include="dev_text.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

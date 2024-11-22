@@ -3,7 +3,7 @@
 // Globální inicializace generátoru náhodných čísel
 std::random_device rd;
 std::mt19937 gen(rd());
-std::uniform_int_distribution<> dis(0, 4);
+std::uniform_int_distribution<> radek(0, 4);
 
 // Konstruktor třídy Game
 Game::Game()
@@ -24,36 +24,37 @@ Game::Game()
     }
 
     // Vytvoření a inicializace dlaždic
-    int halfer = 0;
-    int y = 0;
-    int iHelper = 0;
-    unsigned int worldSize = 50;
+    float halfer = 0.f;
+    float y = 0.f;
+    float iHelper = 0.f;
+    float tileSize = 10.f;
+
     for (size_t i = 0; i < worldSize * worldSize * 2; i++) {
         sf::ConvexShape mapTile;
         mapTile.setPointCount(6); // Hexagonální tvar
-        if (i % worldSize == 0 && i != 0) {
-            y += 50;
-            iHelper = 0;
-            if (halfer == 100) {
+        if (i % (worldSize / 2) == 0 && i != 0) {
+            y += tileSize;
+            iHelper = 0.f;
+            if (halfer == tileSize * 2) {
                 halfer = 0;
             }
             else {
-                halfer = 100;
+                halfer = tileSize * 2;
             }
         }
-        mapTile.setPosition(sf::Vector2f(iHelper * 200 - halfer, y - 200));
 
-        // Nastavení bodů hexagonu
-        mapTile.setPoint(0, sf::Vector2f(0, 50));
-        mapTile.setPoint(1, sf::Vector2f(100, 0));
-        mapTile.setPoint(2, sf::Vector2f(200, 50));
-        mapTile.setPoint(3, sf::Vector2f(200, 150));
-        mapTile.setPoint(4, sf::Vector2f(100, 200));
-        mapTile.setPoint(5, sf::Vector2f(0, 150));
+        mapTile.setPosition(sf::Vector2f(iHelper * tileSize * 4 - halfer, y - tileSize * 4));
+
+        mapTile.setPoint(0, sf::Vector2f(0, tileSize));
+        mapTile.setPoint(1, sf::Vector2f(tileSize * 2, 0));
+        mapTile.setPoint(2, sf::Vector2f(tileSize * 4, tileSize));
+        mapTile.setPoint(3, sf::Vector2f(tileSize * 4, tileSize * 3));
+        mapTile.setPoint(4, sf::Vector2f(tileSize * 2, tileSize * 4));
+        mapTile.setPoint(5, sf::Vector2f(0, tileSize * 3));
 
         // Připojení textury k dlaždici
         mapTile.setTexture(&tileSet);
-        mapTile.setTextureRect(sf::IntRect(dis(gen) * 200, 0, 200, 200));
+        mapTile.setTextureRect(sf::IntRect(radek(gen) * 200, 0, 200, 200));
 
         // Přidání dlaždice do seznamu
         mapItems.push_back(mapTile);
@@ -86,13 +87,13 @@ void Game::update(sf::RenderWindow& _GameWindow) {
 
     float deltaTime = deltaClock.restart().asSeconds();
     // Posun kamery na základě kláves s plynulým pohybem
-    if (mousePos.y == 0 && camera.getCenter().y) {
+    if (mousePos.y == 0 && (camera.getCenter().y - _GameWindow.getSize().y / 2) > -100) {
         camera.move(0, -cameraSpeed * deltaTime);  // Nahoru
     }
-    if (mousePos.y >= _GameWindow.getSize().y - 11) {
+    if (mousePos.y >= _GameWindow.getSize().y - 11) { // && (camera.getCenter().y - _GameWindow.getSize().y / 2) < worldSize * 80
         camera.move(0, cameraSpeed * deltaTime);  // Dolů
     }
-    if (mousePos.x == 0) {
+    if (mousePos.x == 0 && (camera.getCenter().x - _GameWindow.getSize().x / 2) > -100) {
         camera.move(-cameraSpeed * deltaTime, 0);  // Doleva
     }
     if (mousePos.x >= _GameWindow.getSize().x - 1) {

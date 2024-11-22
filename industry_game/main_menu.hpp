@@ -1,5 +1,5 @@
-﻿#ifndef MAIN_MENU_H
-#define MAIN_MENU_H
+﻿#ifndef MAIN_MENU_HPP
+#define MAIN_MENU_HPP
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -28,4 +28,4 @@ private:
     //MessageBox test;
 };
 
-#endif // MAIN_MENU_H
+#endif // MAIN_MENU_HPP

@@ -1,5 +1,5 @@
-﻿#ifndef GAME_H
-#define GAME_H
+﻿#ifndef GAME_HPP
+#define GAME_HPP
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -25,6 +25,7 @@ private:
     sf::Clock deltaClock;  // Hodiny pro měření delta time
     int cameraMoreSpeed = 0;
     sf::Vector2f movedCameraQuestion = sf::Vector2f(0, 0);
+    unsigned int worldSize = 100;
 };
 
-#endif // GAME_H
+#endif // GAME_HPP

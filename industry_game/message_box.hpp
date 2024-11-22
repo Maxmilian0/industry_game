@@ -1,5 +1,5 @@
-#ifndef MESSAGE_BOX_H
-#define MESSAGE_BOX_H
+#ifndef MESSAGE_BOX_HPP
+#define MESSAGE_BOX_HPP
 
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -19,4 +19,4 @@ private:
     sf::Text noButtonText;
 };
 
-#endif // MESSAGE_BOX_H
+#endif // MESSAGE_BOX_HPP

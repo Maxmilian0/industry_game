@@ -1,5 +1,5 @@
-#ifndef MEDIA_LOADER_H
-#define MEDIA_LOADER_H
+#ifndef MEDIA_LOADER_HPP
+#define MEDIA_LOADER_HPP
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
@@ -17,4 +17,4 @@ public:
     }
 };
 
-#endif // MEDIA_LOADER_H
+#endif // MEDIA_LOADER_HPP
