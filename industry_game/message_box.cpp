@@ -1,4 +1,4 @@
-#include "message_box.h"
+#include "message_box.hpp"
 
 MessageBox::MessageBox(const sf::Font& font, const std::string& message, const std::string& title) {
     // Background

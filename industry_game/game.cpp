@@ -1,4 +1,4 @@
-﻿#include "game.h"
+﻿#include "game.hpp"
 
 // Globální inicializace generátoru náhodných čísel
 std::random_device rd;
@@ -6,10 +6,10 @@ std::mt19937 gen(rd());
 std::uniform_int_distribution<> dis(0, 4);
 
 // Konstruktor třídy Game
-Game::Game() : camera(sf::FloatRect(0, 0, 800, 600))
+Game::Game()
 {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
-    camera   = sf::View(sf::FloatRect(0, 0, desktop.width, desktop.height));
+    camera = sf::View(sf::FloatRect(0, 0, desktop.width, desktop.height));
     // Pokus o načtení textury
     if (!tileSet.loadFromFile("img/texture4.png")) {
         logFile.open("REPORT.txt", std::ios::app);
@@ -79,29 +79,36 @@ void Game::draw(sf::RenderWindow& _GameWindow) {
     }
 }
 
-void Game::update() {
-    float cameraSpeed = 150.f;  // Rychlost pohybu kamery
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-        cameraSpeed = 15.f;  // Rychlost při držení shiftu
-    }
+void Game::update(sf::RenderWindow& _GameWindow) {
+    float cameraSpeed = 5.f + cameraMoreSpeed * cameraMoreSpeed / 3;  // Rychlost pohybu kamery
+    sf::Vector2i mousePos = sf::Mouse::getPosition(_GameWindow);
+    movedCameraQuestion = sf::Vector2f(camera.getCenter().x, camera.getCenter().y);
 
-    // Získání delta time, které udává čas, který uplynul od posledního snímku
-    float deltaTime = deltaClock.restart().asSeconds();  // Vrátí čas mezi snímky v sekundách
-
+    float deltaTime = deltaClock.restart().asSeconds();
     // Posun kamery na základě kláves s plynulým pohybem
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+    if (mousePos.y == 0 && camera.getCenter().y) {
         camera.move(0, -cameraSpeed * deltaTime);  // Nahoru
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+    if (mousePos.y >= _GameWindow.getSize().y - 11) {
         camera.move(0, cameraSpeed * deltaTime);  // Dolů
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+    if (mousePos.x == 0) {
         camera.move(-cameraSpeed * deltaTime, 0);  // Doleva
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+    if (mousePos.x >= _GameWindow.getSize().x - 1) {
         camera.move(cameraSpeed * deltaTime, 0);  // Doprava
     }
-}
+    if (movedCameraQuestion == sf::Vector2f(camera.getCenter().x, camera.getCenter().y)) {
+        cameraMoreSpeed = 0;
+    }else {
+        if (cameraMoreSpeed >= 100) {
+            cameraMoreSpeed = 100;
+        }
+        else {
+            cameraMoreSpeed++;
+        }
+    }
+}   
 
 // Zpracování událostí
 int Game::handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow) {
@@ -110,14 +117,20 @@ int Game::handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(_GameWindow);
 
     if (_Event.type == sf::Event::KeyPressed && _Event.key.scancode == sf::Keyboard::Scan::Escape) {
+        camera.setCenter(_GameWindow.getSize().x / 2, _GameWindow.getSize().y / 2);
+        _GameWindow.setView(camera);
         return 1;
     }
+        
 
-    for (size_t i = 0; i < mapItems.size(); ++i) {
-        // Zde můžete implementovat zpracování kliknutí na dlaždice
-        // if (/* nějaká podmínka */) {
-        //     // Reakce na událost
-        // }
+    // ## clicking on tiles ##
+    sf::FloatRect viewBounds(camera.getCenter() - camera.getSize() / 2.f, camera.getSize());
+
+    for (const auto& mapItem : mapItems) {
+        sf::FloatRect itemBounds = mapItem.getGlobalBounds();
+
+        if (viewBounds.intersects(itemBounds)) { // Tiles in camera
+        }
     }
 
     return 0;

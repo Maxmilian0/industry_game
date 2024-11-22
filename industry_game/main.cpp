@@ -14,9 +14,9 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 
-#include "main_menu.h"
-#include "media_loader.h"
-#include "game.h"
+#include "main_menu.hpp"
+#include "media_loader.hpp"
+#include "game.hpp"
 
 std::string getCurrentTime();
 std::string getUsername();
@@ -49,6 +49,13 @@ int main() {
     std::vector<std::string> menuItems = { "Play", "Settings", "Exit" };
     sf::Text fpsText, mousePosText;
     sf::Music mainMenuMusic;
+
+    sf::View uiCamera(sf::FloatRect(0, 0, sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
+    gameWindow.setView(uiCamera);
+
+
+    bool devView = false;
+
     if (!mainMenuMusic.openFromFile("music/industryMadness.mp3")) {
         logFile.open("REPORT.txt", std::ios::app);
         logFile << "\t[X] Error_8r4be (music/industryMadness.mp3)" << std::endl;
@@ -59,11 +66,11 @@ int main() {
 
     fpsText.setFont(geistMonoMedium);
     fpsText.setFillColor(sf::Color::Black);
-    fpsText.setCharacterSize(15.f);
-    fpsText.setPosition(gameWindow.getSize().x - 100.f, gameWindow.getSize().y - (gameWindow.getSize().y - 5));
+    fpsText.setCharacterSize(25.f);
+    fpsText.setPosition(0, 0);
 
     mousePosText = fpsText;
-    mousePosText.setPosition(gameWindow.getSize().x - 150.f, gameWindow.getSize().y - (gameWindow.getSize().y - 25));
+    mousePosText.setPosition(0, fpsText.getCharacterSize());
 
     sf::Clock clock;
     float fps = 0.f;
@@ -103,6 +110,7 @@ int main() {
     // Game loop
     while (gameWindow.isOpen()) {
         sf::Event event;
+
         while (gameWindow.pollEvent(event))
         {
             if (event.type == sf::Event::Closed) {
@@ -132,8 +140,17 @@ int main() {
                     logFile.close();
                 }
             }
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F3) {
+                if (devView) {
+                    devView = false;
+                }
+                else {
+                    devView = true;
+                }
+            }
 
             if (currentState == MENU) {
+                
                 if (mainMenuMusic.getStatus() != sf::Music::Status::Playing) {
                     mainMenuMusic.play();
                 }
@@ -154,7 +171,6 @@ int main() {
                 }
             }
             else if (currentState == GAME) {
-                game.update();
                 if (mainMenuMusic.getStatus() == sf::Music::Status::Playing) {
                     mainMenuMusic.stop();
                 }
@@ -196,11 +212,15 @@ int main() {
             menu.draw(gameWindow);
         }
         else if (currentState == GAME) {
+            game.update(gameWindow);
             game.draw(gameWindow);
         }
 
-        gameWindow.draw(fpsText); // FPS count for debug
-        gameWindow.draw(mousePosText); // Mouse position for debug
+        if (devView) {
+            gameWindow.setView(uiCamera);
+            gameWindow.draw(fpsText); // FPS count for debug
+            gameWindow.draw(mousePosText); // Mouse position for debug
+        }
 
         gameWindow.display();
     }

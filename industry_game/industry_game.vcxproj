@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="devText.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main_menu.cpp" />
@@ -143,10 +144,11 @@
     <None Include="TODO.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game.h" />
-    <ClInclude Include="main_menu.h" />
-    <ClInclude Include="media_loader.h" />
-    <ClInclude Include="message_box.h" />
+    <ClInclude Include="devText.hpp" />
+    <ClInclude Include="game.hpp" />
+    <ClInclude Include="main_menu.hpp" />
+    <ClInclude Include="media_loader.hpp" />
+    <ClInclude Include="message_box.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

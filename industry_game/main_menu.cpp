@@ -1,4 +1,4 @@
-﻿#include "main_menu.h"
+﻿#include "main_menu.hpp"
 
 Menu::Menu(const sf::Font& _Font, const std::vector<std::string>& _Items, std::string _MenuTitle, sf::RenderWindow& _GameWindow) {
     sf::Vector2u zakladniRozliseni(1920, 1080);
@@ -10,6 +10,7 @@ Menu::Menu(const sf::Font& _Font, const std::vector<std::string>& _Items, std::s
         logFile << "\t[X] Error_4v8e (anviltrike.wav)" << std::endl;
         logFile.close();
     }
+
     for (int i = 0; i < 5; ++i) { 
         sf::Sound sound;
         sound.setBuffer(buffer);

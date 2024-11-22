@@ -27,23 +27,29 @@
     <ClCompile Include="game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="devText.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="TODO.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main_menu.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="game.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="media_loader.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="main_menu.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="message_box.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="media_loader.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="message_box.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="devText.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

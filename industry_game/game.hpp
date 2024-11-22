@@ -14,7 +14,7 @@ public:
     Game();
 
     void draw(sf::RenderWindow& _GameWindow);
-    void update();
+    void update(sf::RenderWindow& _GameWindow);
     int handleEvent(const sf::Event& _Event, sf::RenderWindow& _GameWindow);
 
 private:
@@ -23,6 +23,8 @@ private:
     std::fstream logFile;                  // Soubor pro zapisování chybových hlášek
     sf::View camera;
     sf::Clock deltaClock;  // Hodiny pro měření delta time
+    int cameraMoreSpeed = 0;
+    sf::Vector2f movedCameraQuestion = sf::Vector2f(0, 0);
 };
 
 #endif // GAME_H
